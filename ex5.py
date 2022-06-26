@@ -1,6 +1,8 @@
+from calendar import c
 import json
 import os
 
+from black import out
 
 
 def names_of_registered_students(input_json_path, course_name):
@@ -12,7 +14,16 @@ def names_of_registered_students(input_json_path, course_name):
     :param course_name: The name of the course.
     :return: List of the names of the students.
     """
-    pass
+
+    with open(input_json_path, "r") as f:
+        data = json.load(f)
+
+    names = [
+        data[student]["student_name"]
+        for student in data
+        if course_name in data[student]["registered_courses"]
+    ]
+    return names
 
 
 def enrollment_numbers(input_json_path, output_file_path):
@@ -23,8 +34,26 @@ def enrollment_numbers(input_json_path, output_file_path):
     :param input_json_path: Path of the students database json file.
     :param output_file_path: Path of the output text file.
     """
-    pass
 
+    enrollment_numbers_dict = {}
+    with open(input_json_path, "r") as f:
+        data = json.load(f)
+
+    for student in data:
+        for course in data[student]["registered_courses"]:
+            if course in enrollment_numbers_dict:
+                enrollment_numbers_dict[course] += 1
+            else:
+                enrollment_numbers_dict[course] = 1
+
+    sorted_dict = {}
+    for course in sorted(enrollment_numbers_dict):
+        sorted_dict[course] = enrollment_numbers_dict[course]
+
+    with open(output_file_path, "w") as f:
+        for course_name in sorted_dict:
+            course_line = f'"{course_name}" {sorted_dict[course_name]}\n'
+            f.writelines(course_line)
 
 
 def courses_for_lecturers(json_directory_path, output_json_path):
@@ -34,7 +63,20 @@ def courses_for_lecturers(json_directory_path, output_json_path):
     :param json_directory_path: Path of the semsters_data files.
     :param output_json_path: Path of the output json file.
     """
-    pass
 
+    lecturers = {}
+    for file in os.listdir(json_directory_path):
+        if file.lower().endswith(".json"):
+            with open(os.path.join(json_directory_path, file), "r") as f:
+                data = json.load(f)
+            for course_id in data:
+                for lecrurer in data[course_id]["lecturers"]:
+                    if lecrurer not in lecturers:
+                        lecturers[lecrurer] = [data[course_id]["course_name"]]
+                    elif data[course_id]["course_name"] in lecturers[lecrurer]:
+                        pass
+                    else:
+                        lecturers[lecrurer].append(data[course_id]["course_name"])
 
-
+    with open(output_json_path, "w") as f:
+        json.dump(lecturers, f)
