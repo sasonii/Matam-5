@@ -45,7 +45,8 @@ def enrollment_numbers(input_json_path, output_file_path):
 
     sorted_dict = {}
     keys = enrollment_numbers_dict.keys()
-    for course in sorted(keys):
+    keys.sort()
+    for course in keys:
         sorted_dict[course] = enrollment_numbers_dict[course]
 
     with open(output_file_path, "w") as f:
