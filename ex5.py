@@ -1,8 +1,5 @@
-from calendar import c
 import json
 import os
-
-from black import out
 
 
 def names_of_registered_students(input_json_path, course_name):
