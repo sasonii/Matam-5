@@ -44,12 +44,12 @@ def enrollment_numbers(input_json_path, output_file_path):
                 enrollment_numbers_dict[course] = 1
 
     sorted_dict = {}
-    for course in sorted(enrollment_numbers_dict, reverse=False):
+    keys = enrollment_numbers_dict.keys()
+    for course in sorted(keys):
         sorted_dict[course] = enrollment_numbers_dict[course]
 
     with open(output_file_path, "w") as f:
         for course_name in sorted_dict:
-            # course_line = f'"{course_name}" {sorted_dict[course_name]}\n'
             course_line = (
                 '"' + course_name + '" ' + str(sorted_dict[course_name]) + "\n"
             )
